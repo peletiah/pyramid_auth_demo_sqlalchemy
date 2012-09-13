@@ -2,11 +2,12 @@ from .models import (
     DBSession,
     User,
     Page,
+    get_user
     )
 
 
 def groupfinder(userid, request):
-    user = DBSession.query(User).filter(User.login == userid).one()
+    user = get_user(userid)
     if user and user.groups:
         return ['g:%s' % g for g in user.groups.split(',')]
     else:
