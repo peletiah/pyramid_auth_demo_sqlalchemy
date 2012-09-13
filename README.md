@@ -18,4 +18,4 @@ cd auth_tut
 ../bin/pserve development.ini
 ```
 
-Go to http://localhost:6543
+If everything looks fine, go to http://localhost:6543, else let me know!
