@@ -17,3 +17,5 @@ cd auth_tut
 ../bin/python setup.py develo
 ../bin/pserve development.ini
 ```
+
+Go to http://localhost:6543
