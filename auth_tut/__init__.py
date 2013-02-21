@@ -38,6 +38,7 @@ def main(global_config, **settings):
     config.add_route('users', '/users', factory=UserFactory)
     config.add_route('user', '/user/{login}', factory=UserFactory,
                      traverse='/{login}')
+    config.add_route('create_user', '/create_user', factory=UserFactory)
 
     config.add_route('pages', '/pages', factory=PageFactory)
     config.add_route('create_page', '/create_page', factory=PageFactory)
@@ -45,6 +46,11 @@ def main(global_config, **settings):
                      traverse='/{title}')
     config.add_route('edit_page', '/page/{title}/edit', factory=PageFactory,
                      traverse='/{title}')
+    
+    config.add_route('groups', '/groups', factory=PageFactory)
+    config.add_route('create_group', '/create_group', factory=PageFactory)
+    config.add_route('edit_group', '/group/{name}/{action}', factory=PageFactory)
+    
     config.scan()
     return config.make_wsgi_app()
 

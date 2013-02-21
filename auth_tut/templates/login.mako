@@ -1,5 +1,7 @@
 <%inherit file='base.mako' />
 
+${ request.host }
+
 % if failed_attempt:
 <p><font color="red">Invalid credentials, try again.</font></p>
 % endif
