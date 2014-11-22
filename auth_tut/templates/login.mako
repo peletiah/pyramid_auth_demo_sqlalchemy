@@ -18,7 +18,8 @@ ${ request.host }
     <input type="submit" name="submit">
 </form>
 
-<h3>Valid login / password combinations:</h3>
-% for user in users:
-<p>${ user.login } / ${ user.password }</p>
-% endfor
+<h3>Valid combinations in the default database:</h3>
+<p>"admin",  password: "admin"</p>
+<p>"editor",  password: "editor"</p>
+<p>"luser",  password: "luser"</p>
+

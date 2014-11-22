@@ -9,10 +9,11 @@ from pyramid.paster import (
     setup_logging,
     )
 
-from ..models import (
+from auth_tut.models import (
     DBSession,
     User,
     Page,
+    Group,
     Base,
     )
 

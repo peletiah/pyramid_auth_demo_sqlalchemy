@@ -11,7 +11,8 @@ from sqlalchemy import (
     Unicode
     )
 
-from sqlalchemy.ext.declarative import declarative_base, MetaData
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import MetaData
 
 from sqlalchemy.orm import (
     scoped_session,
@@ -36,6 +37,11 @@ from auth_tut.helpers.pbkdf2.pbkdf2 import pbkdf2_bin
 from os import urandom
 from base64 import b64encode, b64decode
 from itertools import izip
+
+
+import logging
+log = logging.getLogger(__name__)
+
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -90,6 +96,7 @@ class User(Base):
 
     def validate_password(self, password):
         """Check a password against an existing hash."""
+        log.debug(password)
         if isinstance(password, unicode):
             password = password.encode('utf-8')
         algorithm, hash_function, cost_factor, salt, hash_a = self.password.split('$')

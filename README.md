@@ -18,4 +18,9 @@ cd auth_tut
 ../bin/pserve development.ini
 ```
 
+You can get a interactive python-shell where you can test the DB-model and other functions by issuing
+```
+../bin/python auth_tut/devtools/sqlalchemy_shell.py
+```
+
 If everything looks fine, go to http://localhost:6543, else let me know!
