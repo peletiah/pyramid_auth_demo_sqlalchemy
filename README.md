@@ -30,4 +30,3 @@ You can get an interactive python-shell where you can test the DB-model and othe
 ```
 ../bin/python auth_tut/devtools/sqlalchemy_shell.py
 ```
-

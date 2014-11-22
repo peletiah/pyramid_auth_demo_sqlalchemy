@@ -62,7 +62,6 @@ user_group_table = Table('user_group', Base.metadata,
 
 
 
-
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
@@ -199,8 +198,7 @@ class Page(Base):
     @classmethod
     def websafe_uri(self, txt):
         uri = txt.replace(' ', '-')
-        return urllib.quote(uri)
-
+        return urllib.quote(uri.encode('utf-8'))
 
 class RootFactory(object):
     __acl__ = [
