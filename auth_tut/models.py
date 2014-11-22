@@ -17,7 +17,8 @@ from sqlalchemy import MetaData
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
-    relation
+    relationship,
+    backref
     )
 
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -67,7 +68,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     login = Column(Text, unique=True)
     password = Column(Unicode(80), nullable=False)
-    groups = relation('Group', secondary=user_group_table, backref='memberships')
+    groups = relationship('Group', secondary=user_group_table, backref='memberships')
 
     @property
     def __acl__(self):
@@ -158,7 +159,7 @@ class Group(Base):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True)
-    users = relation('User', secondary=user_group_table, backref='members')
+    users = relationship('User', secondary=user_group_table, backref='members')
 
     def __init__(self, name):
         self.name = name
@@ -176,7 +177,6 @@ class Page(Base):
     uri = Column(Text, unique=True)
     body = Column(Text)
     owner = Column(Text)
-
 
     @property
     def __acl__(self):

@@ -5,6 +5,7 @@ This Demo is based on the "Object-Level Security"-part of http://michael.mericke
 
 I've added basic SQLAlchemy support to the models and the views. There is a group-object in the database, but at the moment
 it is not used.
+Also use this codeexample with a [pinch of salt](http://www.phrases.org.uk/meanings/take-with-a-grain-of-salt.html), because it is not very polished.
 
 
 Installation
