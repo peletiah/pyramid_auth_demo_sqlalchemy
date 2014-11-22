@@ -147,6 +147,12 @@ class User(Base):
         user = DBSession.query(User).filter(User.id == user_id).one()
         return user
 
+    @classmethod
+    def get_user_by_login(self,user_login):
+        user = DBSession.query(User).filter(User.login == user_login).one()
+        return user
+
+
 
 class Group(Base):
     __tablename__ = 'groups'
@@ -169,14 +175,13 @@ class Page(Base):
     title = Column(Text)
     uri = Column(Text, unique=True)
     body = Column(Text)
-    owner = Column('owner', Integer, ForeignKey('users.id',onupdate="CASCADE", ondelete="CASCADE"))
+    owner = Column(Text)
 
 
     @property
     def __acl__(self):
         return [
             (Allow, self.owner, 'edit'),
-            (Allow, 'g:editor', 'edit'),
         ]
 
     def __init__(self, title, uri, body, owner):

@@ -41,7 +41,7 @@ def pages_view(request):
 )
 def page_view(request):
     page = request.context
-    user = User.get_user_by_id(page.owner)
+    user = User.get_user_by_login(page.owner)
     
 
     return {
@@ -90,7 +90,7 @@ def create_page_view(request):
         errors += v['errors']
 
         if not errors:
-            page = Page(title=title, uri=Page.websafe_uri(title), owner=user.id, body=body)
+            page = Page(title=title, uri=Page.websafe_uri(title), owner=user.login, body=body)
             DBSession.add(page)
             url = request.route_url('page', title=page.uri)
             return HTTPFound(location=url)
@@ -111,7 +111,7 @@ def create_page_view(request):
 def edit_page_view(request):
     uri = request.matchdict['title']
     page = Page.get_page(uri)
-    user = User.get_user_by_id(page.owner)
+    user = User.get_user_by_login(page.owner)
 
     errors = []
     title = page.title

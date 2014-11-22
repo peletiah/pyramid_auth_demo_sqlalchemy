@@ -42,7 +42,7 @@ def users_view(request):
 )
 def user_view(request):
     user = request.context
-    pages = DBSession.query(Page).filter(Page.owner == user.id).all()
+    pages = DBSession.query(Page).filter(Page.owner == user.login).all()
 
     return {
         'user': user,
