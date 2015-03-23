@@ -57,9 +57,6 @@ ic = SQLAlchemyShell()
 cmd = "from auth_tut.models import *"
 print ">>>", cmd
 ic.push(cmd)
-cmd = "import transaction"
-print ">>>", cmd
-ic.push(cmd)
 ic.interact(banner="Use quit() or Ctrl-D (i.e. EOF) to exit")
 
 

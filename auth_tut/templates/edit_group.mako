@@ -1,22 +1,31 @@
 <%inherit file='base.mako' />
 
+<div class="col-md-3">
 % if errors:
-<ul>
     % for e in errors:
-    <li>${ e }</li>
+        <p class="bg-danger">${e}</p>
     % endfor
-</ul>
 % endif
+
 <form method="post" action="${ request.path }">
-    <h3>Group Name</h3>
-    <input type="text" name="name" value="${ name }"/>
-    <input type="submit" name="submit" value="Submit"/>
+    <div class="form-group">
+        <label>Group Name</label>
+        <input type="text" class="form-control" placeholder="enter group name" name='name' value="${ name }"/>
+    </div>
 % for user in users:
     <%
     check = '' 
-    if user.login in members_db:
+    if user.login in member_list:
         check='checked'
     %>
-<p><input type="checkbox" name="member" value="${ user.login }" ${ check }>${ user.login }</input></p>
+    <div class="form-group">
+        <label>
+            <input type="checkbox" value="${ user.login }" name="member" ${ check }> ${ user.login }
+        </label>
+    </div>
 % endfor
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+
 </form>

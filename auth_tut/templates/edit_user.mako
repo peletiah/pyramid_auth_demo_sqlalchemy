@@ -1,11 +1,9 @@
 <%inherit file='base.mako' />
 
 % if errors:
-<ul>
     % for e in errors:
-    <li>${ e }</li>
+        <p class="bg-danger">${e}</p>
     % endfor
-</ul>
 % endif
 <form method="post" action="${ request.path }">
     <h3>Login</h3>

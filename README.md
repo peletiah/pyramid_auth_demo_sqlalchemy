@@ -3,10 +3,9 @@ Pyramid Authorization and Authentication Demo with SQLAlchemy
 
 This Demo is based on the "Object-Level Security"-part of http://michael.merickel.org/projects/pyramid_auth_demo/index.html
 
-I've added basic SQLAlchemy support to the models and the views. There is a group-object in the database, but at the moment
-it is not used.
-Also use this codeexample with a [pinch of salt](http://www.phrases.org.uk/meanings/take-with-a-grain-of-salt.html), because it is not very polished.
+I've added basic SQLAlchemy support to the models and the views, working with permissions for groups and pages.
 
+Take care: If you add a group "admin", everyone in this group has all rights (This would be a huge exploit if used in production, but I've left it as an example for ALL_PERMISSIONS)
 
 Installation
 ------------

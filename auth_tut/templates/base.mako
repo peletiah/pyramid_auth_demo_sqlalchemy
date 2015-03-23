@@ -3,6 +3,9 @@
 <html>
     <head>
         <title>Pyramid Auth Demo</title>
+        <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/css/main.css"
     </head>
     <body>
         ${ next.body() }

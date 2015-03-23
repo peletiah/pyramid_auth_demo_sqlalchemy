@@ -3,17 +3,23 @@
 % if errors:
 <ul>
     % for e in errors:
-    <li>${ e }</li>
+        <p class="bg-warning">${ e }</p>
     % endfor
 </ul>
 % endif
 <form method="post" action="${ request.path }">
-    <h3>Title</h3>
-    <input type="text" name="title" value="${ title }"/>
-    <h3>Owner</h3>
-    <h4>${ owner }</h4>
-    <h3>Body</h3>
-    <textarea name="body" rows="10" columns="60">${ body }</textarea>
-    <br/>
-    <input type="submit" name="submit" value="Submit"/>
+    <p class="small">Owner: <a href="${ request.route_url('user', login=owner) }">${ owner }</a></p>
+    <form>
+        <div class="col-md-3">
+        <div class="form-group">
+            <label>Page Title</label>
+            <input class="form-control" type="text" name="title" placeholder="My page title" value="${ title }"/>
+        </div>
+        <div class="form-group">
+            <label>Page Body</label>
+            <textarea class="form-control" name="body" rows="5" placeholder="My page content">${ body }</textarea>
+        </div>
+        <button type="submit" name="submit" value="Submit"/>Submit</button>
+    </div>
+    </form>
 </form>

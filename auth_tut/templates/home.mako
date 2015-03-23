@@ -11,14 +11,16 @@ ${ request.host }
 <p><a href="${ request.route_url('create_user') }">Create account</a></p>
 % endif
 
+<hr>
 <p>Create a page <a href="${ request.route_url('create_page') }">here</a></p>
 
 <p><a href="${ request.route_url('pages') }">All Pages</a></p>
 <p><a href="${ request.route_url('users') }">All Users</a></p>
 <p><a href="${ request.route_url('groups') }">All Groups</a></p>
 
+<hr>
 
-<h2>Your Pages</h2>
+<h4>Your Pages</h4>
 % if user_pages:
 % for page in user_pages:
 <p>

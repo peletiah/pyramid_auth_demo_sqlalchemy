@@ -34,7 +34,7 @@ from pyramid.security import (
     )
 
 import hashlib
-from auth_tut.helpers.pbkdf2.pbkdf2 import pbkdf2_bin
+from auth_tut.lib.pbkdf2.pbkdf2 import pbkdf2_bin
 from os import urandom
 from base64 import b64encode, b64decode
 from itertools import izip
@@ -133,8 +133,12 @@ class User(Base):
 
     @classmethod
     def get_user(self,login):
-        user = DBSession.query(User).filter(User.login == login).one()
-        return user
+        try:
+            user = DBSession.query(User).filter(User.login == login).one()
+            return user
+        except Exception, e:
+            print 'Error retrieving user %s: ',e
+            return None
     
     @classmethod
     def get_users(self):
@@ -160,11 +164,20 @@ class Group(Base):
     name = Column(Text, unique=True)
     users = relationship('User', secondary=user_group_table, backref='members')
 
+    @property
+    def __acl__(self): 
+
+        # only allow members of this group to add new members
+        access_list = [(Allow, 'g:{0}'.format(self.name), 'edit')]
+        log.debug('GROUP access list: {0}'.format(access_list))
+        return access_list
+
     def __init__(self, name):
         self.name = name
 
     @classmethod
     def get_group(self, name):
+        log.debug(name)
         group = DBSession.query(Group).filter(Group.name == name).one()
         return group
 
@@ -175,14 +188,23 @@ class Page(Base):
     title = Column(Text)
     uri = Column(Text, unique=True)
     body = Column(Text)
-    owner = Column(Text)
+    owner = Column('owner', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
 
     @property
-    def __acl__(self):
-        return [
+    def __acl__(self): 
+
+        log.debug('Owner: {0}'.format(self.owner))
+        access_list = [
             (Allow, self.owner, 'edit'),
         ]
 
+        user = User.get_user_by_id(self.owner)
+        for group in user.groups:
+            access_list.append((Allow, 'g:{0}'.format(group.name), 'edit'))
+
+        return access_list
+
+ 
     def __init__(self, title, uri, body, owner):
         self.title = title
         self.uri = uri
@@ -210,6 +232,7 @@ class RootFactory(object):
 
 class UserFactory(object):
     __acl__ = [
+        (Allow, Everyone, 'view'),
         (Allow, 'g:admin', ALL_PERMISSIONS),
     ]
 
@@ -221,6 +244,22 @@ class UserFactory(object):
         user.__parent__ = self
         user.__name__ = key
         return user
+
+class GroupFactory(object):
+    __acl__ = [
+        (Allow, Everyone, 'view'),
+        (Allow, Authenticated, 'create'),
+        (Allow, 'g:admin', ALL_PERMISSIONS),
+    ]
+
+    def __init__(self, request):
+        self.request = request
+
+    def __getitem__(self, key):
+        group = Group.get_group(key)
+        group.__parent__ = self
+        group.__name__ = key
+        return group
 
 class PageFactory(object):
     __acl__ = [

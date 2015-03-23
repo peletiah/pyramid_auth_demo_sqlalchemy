@@ -3,7 +3,7 @@
 ${ request.host }
 
 % if failed_attempt:
-<p><font color="red">Invalid credentials, try again.</font></p>
+    <p class="bg-danger">Invalid credentials, try again.</p>
 % endif
 <form method="post" action="${ request.path }">
     <p>

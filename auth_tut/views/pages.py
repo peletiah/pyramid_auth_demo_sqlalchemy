@@ -23,6 +23,9 @@ from auth_tut.models import (
     Page,
     )
 
+import logging
+log = logging.getLogger(__name__)
+
 @view_config(
     route_name='pages',
     permission='view',
@@ -41,7 +44,7 @@ def pages_view(request):
 )
 def page_view(request):
     page = request.context
-    user = User.get_user_by_login(page.owner)
+    user = User.get_user_by_id(page.owner)
     
 
     return {
@@ -90,7 +93,7 @@ def create_page_view(request):
         errors += v['errors']
 
         if not errors:
-            page = Page(title=title, uri=Page.websafe_uri(title), owner=user.login, body=body)
+            page = Page(title=title, uri=Page.websafe_uri(title), owner=user.id, body=body)
             DBSession.add(page)
             url = request.route_url('page', title=page.uri)
             return HTTPFound(location=url)
@@ -111,7 +114,13 @@ def create_page_view(request):
 def edit_page_view(request):
     uri = request.matchdict['title']
     page = Page.get_page(uri)
-    user = User.get_user_by_login(page.owner)
+    user = User.get_user_by_id(page.owner)
+
+    try:
+        log.debug('Edit page view')
+        log.debug(user.groups[0].name)
+    except Exception, e:
+        log.debug('WARNING: {0}'.format(e))
 
     errors = []
     title = page.title

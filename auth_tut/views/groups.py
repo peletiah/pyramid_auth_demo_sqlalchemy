@@ -24,6 +24,9 @@ from auth_tut.models import (
     Group,
     )
 
+import logging
+log = logging.getLogger(__name__)
+
 
 
 @view_config(
@@ -40,12 +43,13 @@ def groups_view(request):
 
 @view_config(
     route_name='create_group',
+    permission='create',
     renderer='edit_group.mako',
 )
 def create_group_view(request):
     errors = []
     name = ''
-    members_db = list()
+    member_list = list()
     users = User.get_users()
     
     if request.method == 'POST':
@@ -64,40 +68,46 @@ def create_group_view(request):
     return {
         'name': name,
         'users': users,
-        'members_db': members_db,
+        'member_list': member_list,
         'errors': errors,
     }
 
 @view_config(
     route_name='edit_group',
+    permission='edit',
     renderer='edit_group.mako',
 )
 def edit_group_view(request):
     name = request.matchdict['name']
     group = Group.get_group(name)
     users = User.get_users()
-    members_db = list()
+    member_list = list()
     for member in group.users:
-        members_db.append(member.login)
+        member_list.append(member.login)
 
     errors = []
     if request.method == 'POST':
         name = request.POST.get('name', '')
         members_post = request.POST.getall('member')
+        if authenticated_userid(request) not in members_post:
+            log.debug('AUTHENTICATED USERID NOT IN MEMBERS_POST')
+            errors.append('Can\'t remove yourself from this group')
+            log.debug(errors)
 
         if not errors:
             for user in users:
                 if user.login in members_post:
                     group.users.append(user)
-                elif user.login in members_db and user.login not in members_post:
+                elif user.login in member_list and user.login not in members_post:
                     group.users.remove(user)
-            url = request.route_url('home')
+            group.name = name
+            url = request.route_url('groups')
             return HTTPFound(location=url)
          
     return {
         'name': name,
         'users': users,
-        'members_db': members_db,
+        'member_list': member_list,
         'errors': errors,
     }
 

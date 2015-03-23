@@ -3,11 +3,12 @@ from sqlalchemy import engine_from_config
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 
-from auth_tut.security import groupfinder
+from auth_tut.security import auth_callback
 
 from auth_tut.models import (
     RootFactory as RootFactory,
     UserFactory as UserFactory,
+    GroupFactory as GroupFactory,
     PageFactory as PageFactory
 )
 
@@ -20,7 +21,7 @@ def main(global_config, **settings):
     DBSession.configure(bind=engine)
     authn_policy = AuthTktAuthenticationPolicy(
         secret=settings['auth_tut.secret'],
-        callback=groupfinder
+        callback=auth_callback
     )
     authz_policy = ACLAuthorizationPolicy()
 
@@ -47,9 +48,11 @@ def main(global_config, **settings):
     config.add_route('edit_page', '/page/{title}/edit', factory=PageFactory,
                      traverse='/{title}')
     
-    config.add_route('groups', '/groups', factory=PageFactory)
-    config.add_route('create_group', '/create_group', factory=PageFactory)
-    config.add_route('edit_group', '/group/{name}/{action}', factory=PageFactory)
+    config.add_route('groups', '/groups', factory=GroupFactory)
+    config.add_route('create_group', '/create_group', factory=GroupFactory)
+    config.add_route('edit_group', '/group/{name}/{action}', factory=GroupFactory,
+                    traverse='/{name}') # traverse needs to be set for GroupFactory
+                                        # to get the right authentication variable
     
     config.scan()
     return config.make_wsgi_app()
