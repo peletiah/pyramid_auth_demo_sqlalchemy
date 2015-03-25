@@ -33,12 +33,7 @@ from pyramid.security import (
     ALL_PERMISSIONS
     )
 
-import hashlib
-from auth_tut.lib.pbkdf2.pbkdf2 import pbkdf2_bin
-from os import urandom
-from base64 import b64encode, b64decode
-from itertools import izip
-
+from passlib.hash import pbkdf2_sha256
 
 import logging
 log = logging.getLogger(__name__)
@@ -46,14 +41,6 @@ log = logging.getLogger(__name__)
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
-
-SALT_LENGTH = 12
-KEY_LENGTH = 24
-HASH_FUNCTION = 'sha256'  # Must be in hashlib.
-# Linear to the hashing time. Adjust to be high but take a reasonable
-# amount of time on your server. Measure with:
-# python -m timeit -s 'import passwords as p' 'p.make_hash("something")'
-COST_FACTOR = 10000
 
 user_group_table = Table('user_group', Base.metadata,
     Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
@@ -81,56 +68,19 @@ class User(Base):
 
 
     def _make_hash(self, password):
-        """Generate a random salt and return a new hash for the password."""
         if isinstance(password, unicode):
             password = password.encode('utf-8')
-        salt = b64encode(urandom(SALT_LENGTH))
-        hashed_password =  'PBKDF2$%s$%i$%s$%s' % (
-            HASH_FUNCTION,
-            COST_FACTOR,
-            salt,
-            b64encode(pbkdf2_bin(password, salt, COST_FACTOR, KEY_LENGTH,
-                                 getattr(hashlib, HASH_FUNCTION))))
-
-        self.password = hashed_password
+        hash = pbkdf2_sha256.encrypt(password)
+        self.password = hash
 
     def validate_password(self, password):
         """Check a password against an existing hash."""
-        log.debug(password)
         if isinstance(password, unicode):
             password = password.encode('utf-8')
-        algorithm, hash_function, cost_factor, salt, hash_a = self.password.split('$')
-        assert algorithm == 'PBKDF2'
-        hash_a = b64decode(hash_a)
-        hash_b = pbkdf2_bin(password, salt, int(cost_factor), len(hash_a),
-                            getattr(hashlib, hash_function))
-        assert len(hash_a) == len(hash_b)  # we requested this from pbkdf2_bin()
-        # Same as "return hash_a == hash_b" but takes a constant time.
-        # See http://carlos.bueno.org/2011/10/timing.html
-        diff = 0
-        for char_a, char_b in izip(hash_a, hash_b):
-            diff |= ord(char_a) ^ ord(char_b)
-        return diff == 0
-
-    def _set_password(self, password):
-        hashed_password = password
-
-        if isinstance(password, unicode):
-            password_8bit = password.encode('UTF-8')
-        else:
-            password_8bit = password
-
-        salt = sha1()
-        salt.update(os.urandom(60))
-        hash = sha1()
-        hash.update(password_8bit + salt.hexdigest())
-        hashed_password = salt.hexdigest() + hash.hexdigest()
-
-        if not isinstance(hashed_password, unicode):
-            hashed_password = hashed_password.decode('UTF-8')
-
-        self.password = hashed_password
-
+        hash = self.password
+        log.debug(password)
+        return pbkdf2_sha256.verify(password, hash)
+        
     @classmethod
     def get_user(self,login):
         try:
