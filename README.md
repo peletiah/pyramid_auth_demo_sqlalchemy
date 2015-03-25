@@ -5,7 +5,7 @@ This Demo is based on the "Object-Level Security"-part of http://michael.mericke
 
 I've added basic SQLAlchemy support to the models and the views, working with permissions for groups and pages.
 
-Take care: If you add a group "admin", everyone in this group has all rights (This would be a huge exploit if used in production, but I've left it as an example for ALL_PERMISSIONS)
+Take care: If you add a group "admin", everyone in this group has all rights (This would be a huge security hole if used in production 1:1, but I've left it as an example for ALL_PERMISSIONS)
 
 Installation
 ------------
