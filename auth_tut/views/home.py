@@ -38,7 +38,7 @@ def forbidden_view(request):
 )
 def home_view(request):
     login = authenticated_userid(request)
-    user = DBSession.query(User).filter(User.login == login).first()
+    user = DBSession.query(User).filter(User.login == login).one()
     try:
         user_pages = DBSession.query(Page).filter(Page.owner == user.id).all()
     except:
