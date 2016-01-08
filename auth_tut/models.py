@@ -151,6 +151,8 @@ class Page(Base):
         user = User.get_user_by_id(self.owner)
         for group in user.groups:
             access_list.append((Allow, 'g:{0}'.format(group.name), 'edit'))
+        
+        log.debug('PAGE access list: {0}'.format(access_list))
 
         return access_list
 
